@@ -1,0 +1,8 @@
+[project]
+name = "neuroforge"
+version = "0.1.0"
+description = "A Deep Learning Framework built from scratch in Python."
+authors = [
+    {name = "Krishna Agrawal"}
+]
+requires-python = ">=3.11"
