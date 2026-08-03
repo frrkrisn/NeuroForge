@@ -13,42 +13,35 @@ class Tensor:
     def __repr__(self):
         return f"Tensor({self.data})"
 
-    # Addition
+    def _validate(self, other):
+        """
+        Validate that two tensors have the same size.
+        """
+
+        if len(self.data) != len(other.data):
+            raise ValueError(
+                f"Tensor size mismatch: {len(self.data)} != {len(other.data)}"
+            )
+
+    def _elementwise(self, other, operation):
+
+        self._validate(other)
+
+        result = []
+
+        for a, b in zip(self.data, other.data):
+            result.append(operation(a, b))
+
+        return Tensor(result)
+
     def __add__(self, other):
+        return self._elementwise(other, lambda a, b: a + b)
 
-        result = []
-
-        for i in range(len(self.data)):
-            result.append(self.data[i] + other.data[i])
-
-        return Tensor(result)
-
-    # Subtraction
     def __sub__(self, other):
+        return self._elementwise(other, lambda a, b: a - b)
 
-        result = []
-
-        for i in range(len(self.data)):
-            result.append(self.data[i] - other.data[i])
-
-        return Tensor(result)
-
-    # Multiplication
     def __mul__(self, other):
+        return self._elementwise(other, lambda a, b: a * b)
 
-        result = []
-
-        for i in range(len(self.data)):
-            result.append(self.data[i] * other.data[i])
-
-        return Tensor(result)
-
-    # Division
     def __truediv__(self, other):
-
-        result = []
-
-        for i in range(len(self.data)):
-            result.append(self.data[i] / other.data[i])
-
-        return Tensor(result)
+        return self._elementwise(other, lambda a, b: a / b)
