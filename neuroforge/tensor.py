@@ -47,3 +47,13 @@ class Tensor:
 
     def __truediv__(self, other):
         return self._elementwise(other, lambda a, b: a / b)
+
+    def _get_shape(self, data):
+
+      if not isinstance(data, list):
+        return ()
+
+      if len(data) == 0:
+        return (0,)
+
+      return (len(data),) + self._get_shape(data[0])
