@@ -10,6 +10,8 @@ class Tensor:
     def __init__(self, data):
         self.data = data
 
+        self.shape = self._get_shape(data)
+
     def __repr__(self):
         return f"Tensor({self.data})"
 
