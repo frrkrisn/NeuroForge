@@ -123,7 +123,10 @@ class Tensor:
 
       result.append(row)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
       return Tensor(result)    
 
     # -----------------------------
