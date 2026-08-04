@@ -8,11 +8,8 @@ Author: Krishna Agrawal
 class Tensor:
 
     def __init__(self, data):
-
         self._validate_structure(data)
-
         self.data = data
-
         self.shape = self._get_shape(data)
 
     def __len__(self):
@@ -21,39 +18,63 @@ class Tensor:
     def __getitem__(self, index):
         return self.data[index]
 
-    def __eq__(self, other):
-
-      if not isinstance(other, Tensor):
-        return False
-
-      return self.data == other.data 
-
     def __iter__(self):
-        return iter(self.data)   
+        return iter(self.data)
+
+    def __eq__(self, other):
+        if not isinstance(other, Tensor):
+            return False
+        return self.data == other.data
 
     def __repr__(self):
-        return f"Tensor({self.data})"
+        return f"Tensor(data={self.data}, shape={self.shape})"
+
+    # -----------------------------
+    # Validation
+    # -----------------------------
 
     def _validate(self, other):
-        """
-        Validate that two tensors have the same size.
-        """
-
         if len(self.data) != len(other.data):
             raise ValueError(
                 f"Tensor size mismatch: {len(self.data)} != {len(other.data)}"
             )
 
+    # -----------------------------
+    # Elementwise Operations
+    # -----------------------------
+
     def _elementwise(self, other, operation):
 
-        self._validate(other)
+        # Tensor vs Tensor
+        if isinstance(other, Tensor):
 
-        result = []
+            self._validate(other)
 
-        for a, b in zip(self.data, other.data):
-            result.append(operation(a, b))
+            result = []
 
-        return Tensor(result)
+            for a, b in zip(self.data, other.data):
+                result.append(operation(a, b))
+
+            return Tensor(result)
+
+        # Tensor vs Scalar
+        elif isinstance(other, (int, float)):
+
+            result = []
+
+            for value in self.data:
+                result.append(operation(value, other))
+
+            return Tensor(result)
+
+        else:
+            raise TypeError(
+                f"Unsupported operand type: {type(other)}"
+            )
+
+    # -----------------------------
+    # Arithmetic
+    # -----------------------------
 
     def __add__(self, other):
         return self._elementwise(other, lambda a, b: a + b)
@@ -67,17 +88,83 @@ class Tensor:
     def __truediv__(self, other):
         return self._elementwise(other, lambda a, b: a / b)
 
+
+    def __matmul__(self, other):
+
+      if not isinstance(other, Tensor):
+        raise TypeError("Matrix multiplication requires another Tensor.")
+ 
+      if len(self.shape) != 2 or len(other.shape) != 2:
+        raise ValueError("Matrix multiplication requires 2D tensors.")
+
+      rows_a, cols_a = self.shape
+      rows_b, cols_b = other.shape
+
+      if cols_a != rows_b:
+        raise ValueError(
+            f"Cannot multiply shapes {self.shape} and {other.shape}"
+        )
+
+      result = []
+
+      for i in range(rows_a):
+
+        row = []
+
+        for j in range(cols_b):
+
+            value = 0
+
+            for k in range(cols_a):
+
+                value += self.data[i][k] * other.data[k][j]
+
+            row.append(value)
+
+      result.append(row)
+
+
+      return Tensor(result)    
+
+    # -----------------------------
+    # Reverse Arithmetic
+    # -----------------------------
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __rsub__(self, other):
+
+        result = []
+
+        for value in self.data:
+            result.append(other - value)
+
+        return Tensor(result)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    # -----------------------------
+    # Shape
+    # -----------------------------
+
     def _get_shape(self, data):
 
-      if not isinstance(data, list):
-        return ()
+        if not isinstance(data, list):
+            return ()
 
-      if len(data) == 0:
-        return (0,)
+        if len(data) == 0:
+            return (0,)
 
-      return (len(data),) + self._get_shape(data[0])
+        return (len(data),) + self._get_shape(data[0])
+
+    # -----------------------------
+    # Structure Validation
+    # -----------------------------
 
     def _validate_structure(self, data):
+
         if not isinstance(data, list):
             return
 
@@ -89,17 +176,19 @@ class Tensor:
         for item in data:
 
             if isinstance(item, list) != first_is_list:
-                raise ValueError("Inconsistent structure in tensor data.")
+                raise ValueError(
+                    "Invalid Tensor: mixed list and scalar elements."
+                )
 
         if first_is_list:
 
-              expected_length = len(data[0])
+            expected_length = len(data[0])
 
-              for row in data:
+            for row in data:
 
-                  if len(row) != expected_length:
-                        raise ValueError("Inconsistent structure in tensor data.")
+                if len(row) != expected_length:
+                    raise ValueError(
+                        "Invalid Tensor: jagged arrays are not allowed."
+                    )
 
-
-                  self._validate_structure(row)
-        
+                self._validate_structure(row)
