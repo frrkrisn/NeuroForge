@@ -220,3 +220,36 @@ class Tensor:
                     )
 
                 self._validate_structure(row)
+
+
+    def _flatten(self, data):
+
+      if not isinstance(data, list):
+        return [data]
+
+      result = []
+
+      for item in data:
+        result.extend(self._flatten(item))
+
+      return result  
+
+    def _build_shape(self, flat, rows, cols):
+
+     result = []
+
+     index = 0
+
+     for i in range(rows):
+
+        row = []
+
+        for j in range(cols):
+
+            row.append(flat[index])
+
+            index += 1
+
+        result.append(row)
+
+        return result           
