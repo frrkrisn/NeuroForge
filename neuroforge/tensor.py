@@ -125,6 +125,34 @@ class Tensor:
 
 
       return Tensor(result)    
+    
+
+    def transpose(self):
+
+     if len(self.shape) != 2:
+        raise ValueError(
+            "Transpose is only supported for 2D tensors."
+        )
+
+     rows, cols = self.shape
+
+     result = []
+
+     for j in range(cols):
+
+        new_row = []
+
+        for i in range(rows):
+
+            new_row.append(self.data[i][j])
+
+        result.append(new_row)
+
+     return Tensor(result)
+
+    @property
+    def T(self):
+        return self.transpose()
 
     # -----------------------------
     # Reverse Arithmetic
