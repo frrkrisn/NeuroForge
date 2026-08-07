@@ -203,23 +203,66 @@ class Tensor:
         return self.__mul__(other)
 
 
-    def sum(self):
+    def sum(self, axis=None):
 
-     flat = self._flatten(self.data)
+        flat = self._flatten(self.data)
 
-     total = 0
+        if axis is None:
+          return sum(flat)
 
-     for value in flat:
-        total += value
+        if len(self.shape) != 2:
+           raise ValueError(
+            "Axis operations currently support only 2D tensors."
+           )
 
-     return total
+        rows, cols = self.shape
+
+        if axis == 0:
+
+            result = []
+
+            for j in range(cols):
+
+               total = 0
+
+               for i in range(rows):
+
+                total += self.data[i][j]
+
+            result.append(total)
+  
+            return Tensor(result)
+
+        elif axis == 1:
+
+             result = []
+
+             for row in self.data:
+
+               result.append(sum(row))
+
+             return Tensor(result)
+
+        else:
+
+             raise ValueError("Axis must be 0 or 1.")
  
  
-    def mean(self):
+    def mean(self, axis=None):
 
-     flat = self._flatten(self.data)
+       if axis is None:
 
-     return sum(flat) / len(flat)
+          flat = self._flatten(self.data)
+
+          return sum(flat) / len(flat)
+
+       summed = self.sum(axis)
+
+       if axis == 0:
+            return summed / self.shape[0]
+
+       elif axis == 1:
+          return summed / self.shape[1]
     # -----------------------------
     # Shape
     # -----------------------------
