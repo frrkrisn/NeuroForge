@@ -44,6 +44,35 @@ class Tensor:
     # -----------------------------
 
     def _elementwise(self, other, operation):
+        
+        if isinstance(other, Tensor):
+
+            # Same shape
+            if self.shape == other.shape:
+                self._validate(other)
+
+            # Broadcast vector over matrix
+            elif len(self.shape) == 2 and len(other.shape) == 1:
+
+                rows, cols = self.shape
+
+                if len(other.data) != cols:
+                      raise ValueError(
+                            "Broadcast failed: incompatible shapes."
+                      )
+
+                expanded = []
+
+                for _ in range(rows):
+                    expanded.append(other.data.copy())
+
+                other = Tensor(expanded)
+
+        else:
+
+                raise ValueError(
+                    f"Cannot broadcast {self.shape} with {other.shape}"
+                )
 
         # Tensor vs Tensor
         if isinstance(other, Tensor):
