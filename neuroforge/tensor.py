@@ -173,6 +173,24 @@ class Tensor:
     def __rmul__(self, other):
         return self.__mul__(other)
 
+
+    def sum(self):
+
+     flat = self._flatten(self.data)
+
+     total = 0
+
+     for value in flat:
+        total += value
+
+     return total
+ 
+ 
+    def mean(self):
+
+     flat = self._flatten(self.data)
+
+     return sum(flat) / len(flat)
     # -----------------------------
     # Shape
     # -----------------------------
