@@ -3,6 +3,7 @@ NeuroForge Layers
 """
 
 from neuroforge.activations import relu
+from neuroforge.tensor import Tensor
 
 
 class Neuron:
@@ -31,3 +32,17 @@ class Layer:
             outputs.append(neuron.forward(inputs))
 
         return outputs
+    
+    
+class Linear:
+
+    def __init__(self, weights, bias):
+
+        self.weights = Tensor(weights)
+        self.bias = Tensor(bias)
+
+    def forward(self, x):
+
+        x = Tensor(x)
+
+        return (x @ self.weights) + self.bias    
