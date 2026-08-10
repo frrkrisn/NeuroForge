@@ -29,11 +29,19 @@ class ReLU:
 
 import math
 
-def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
+class Sigmoid:
 
+    def forward(self, x):
 
+        if isinstance(x, Tensor):
 
+            def apply(data):
 
-def tanh(x):
-    return math.tanh(x)
+                if isinstance(data, list):
+                    return [apply(item) for item in data]
+
+                return 1 / (1 + math.exp(-data))
+
+            return Tensor(apply(x.data))
+
+        return 1 / (1 + math.exp(-x))
