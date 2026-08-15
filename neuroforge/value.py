@@ -17,15 +17,7 @@ class Value:
          f"data={self.data}, "
          f"grad={self.grad}"
          f")"
-       )
-       
-    def __add__(self, other):
-        
-        if not isinstance(other, Value):
-            other = Value(other)
-            
-        return Value(self.data + other.data,
-                     (self, other), '+')    
+       )    
     
     def __mul__(self, other):
         
@@ -49,3 +41,23 @@ class Value:
             self.grad = 1
 
             self._backward() 
+            
+    def __add__(self, other):
+
+      if not isinstance(other, Value):
+         other = Value(other)
+
+      out = Value(
+        self.data + other.data,
+        (self, other)
+      )
+
+      def _backward():
+
+        self.grad += 1 * out.grad
+
+        other.grad += 1 * out.grad
+
+      out._backward = _backward
+
+      return out        
