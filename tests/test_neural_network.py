@@ -29,5 +29,3 @@ model = Sequential(
 x = [[2,3]]
 
 prediction = model.forward(x)
-
-print(prediction)
