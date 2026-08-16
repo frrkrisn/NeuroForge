@@ -77,4 +77,28 @@ class Value:
 
       out._backward = _backward
 
-      return out        
+      return out       
+    
+    def __pow__(self, exponent):
+
+     if not isinstance(exponent, (int, float)):
+        raise TypeError(
+            "Power operation requires an integer or float exponent."
+        )
+
+     out = Value(
+        self.data ** exponent,
+        (self,)
+     )
+
+     def _backward():
+
+        self.grad += (
+            exponent
+            * (self.data ** (exponent - 1))
+            * out.grad
+        )
+
+     out._backward = _backward
+
+     return out 
