@@ -1,3 +1,6 @@
+import math
+
+
 class Value:
     
     def __init__(self, data, _children=(), _op=''):
@@ -35,6 +38,59 @@ class Value:
     
     def __rmul__(self, other):
      return self * other
+    
+    
+    def exp(self):
+
+     out = Value(
+        math.exp(self.data),
+        (self,)
+     )
+
+     def _backward():
+
+        self.grad += out.data * out.grad
+
+     out._backward = _backward
+
+     return out 
+ 
+ 
+    def log(self):
+
+     out = Value(
+        math.log(self.data),
+        (self,)
+     )
+
+     def _backward():
+
+        self.grad += (1 / self.data) * out.grad
+
+     out._backward = _backward
+
+     return out
+ 
+ 
+    def tanh(self):
+
+     t = math.tanh(self.data)
+
+     out = Value(
+        t,
+        (self,)
+     )
+
+     def _backward():
+
+        self.grad += (
+            (1 - t ** 2)
+            * out.grad
+        )
+
+     out._backward = _backward
+
+     return out
  
  
     def __mul__(self, other):
