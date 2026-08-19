@@ -45,4 +45,12 @@ class Linear:
 
         x = Tensor(x)
 
-        return (x @ self.weights) + self.bias    
+        return (x @ self.weights) + self.bias  
+    
+    
+    def parameters(self):
+
+     return [
+        self.weights,
+        self.bias
+     ] 
