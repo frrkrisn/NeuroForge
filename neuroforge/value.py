@@ -183,3 +183,11 @@ class Value:
         other = Value(other)
 
      return self * (other ** -1)
+  
+class Parameter(Value):
+
+      def __init__(self, data):
+
+        super().__init__(data)
+
+        self.trainable = True
