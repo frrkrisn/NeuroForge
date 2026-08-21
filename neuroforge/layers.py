@@ -4,6 +4,7 @@ NeuroForge Layers
 
 from neuroforge.activations import relu
 from neuroforge.tensor import Tensor
+from neuroforge.value import Parameter
 
 
 class Neuron:
@@ -54,3 +55,25 @@ class Linear:
         self.weights,
         self.bias
      ] 
+     
+
+
+
+
+class TrainableLinear:
+
+    def __init__(self, weight, bias):
+
+        self.weight = Parameter(weight)
+        self.bias = Parameter(bias)
+
+    def forward(self, x):
+
+        return self.weight * x + self.bias
+
+    def parameters(self):
+
+        return [
+            self.weight,
+            self.bias
+        ]     
